@@ -1,0 +1,40 @@
+# "Build bundle" — regenerate the bundle release and push it.
+#
+# No `push:` trigger on purpose. GitHub runs a push-triggered workflow using the copy of
+# the file on the branch that was pushed, and this file lives ONLY on `main`. A push to
+# backend/frontend/cli would therefore never run it. So we rebuild on a schedule instead
+# (and allow manual runs). NOTE: scheduled runs and the manual "Run workflow" button only
+# work when this file is on the repository's DEFAULT branch — make `main` the default.
+name: Build bundle
+
+on:
+  schedule:
+    - cron: "0 * * * *" # hourly
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          submodules: true
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Configure git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Rebuild and push bundle
+        run: node scripts/build-bundle.mjs --push
