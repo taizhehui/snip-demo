@@ -13,7 +13,8 @@ export interface Link {
 @Injectable({ providedIn: 'root' })
 export class LinkService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:3000';
+  // Same-origin: the bundle serves UI + API together; `ng serve` proxies /api (see proxy.conf.json).
+  private base = '';
 
   list(): Observable<Link[]> {
     return this.http.get<Link[]>(`${this.base}/api/links`);
