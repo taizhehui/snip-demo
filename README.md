@@ -82,3 +82,27 @@ Each layer is edited on its own branch, then the superproject pointer is bumped:
 
 The layer commit and the pointer commit are separate records — that extra step is what
 keeps `main` a pinned, reproducible snapshot of the whole app.
+
+## Generated `bundle` release
+
+`bundle/` is a fourth submodule tracking the **generated** `bundle` branch — a single
+deployable release (one Bun process serving the API, redirects, and the built web UI,
+with the CLI alongside). It is **generated output; never hand-edit it**.
+
+Rebuild it from the source branches with the zero-dependency script:
+
+```
+node scripts/build-bundle.mjs          # assemble locally (safe no-op if unchanged)
+node scripts/build-bundle.mjs --push   # also push the bundle branch + main pointer
+```
+
+The script updates the source submodules, builds the frontend, assembles `bundle/`
+(server + `public/` UI + CLI + `.env`, `Dockerfile`, `railway.json`), then commits the
+bundle and bumps the pointer — each step guarded so a re-run with no changes does
+nothing.
+
+Run the release:
+
+```
+cd bundle && bun start   # web UI + API + redirects on :3000, one process
+```
