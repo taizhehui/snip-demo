@@ -1,6 +1,8 @@
 <main class="wrap">
-  <h1>Snip</h1>
-  <p class="sub">Paste a link, get a short one.</p>
+  <header class="hero">
+    <h1>Snip</h1>
+    <p class="sub">Paste a link, get a short one.</p>
+  </header>
 
   <form class="form" (ngSubmit)="submit()">
     <input
@@ -17,38 +19,40 @@
   </form>
 
   @if (error()) {
-    <p class="error">{{ error() }}</p>
+    <p class="notice error">{{ error() }}</p>
   }
 
   @if (created(); as link) {
-    <p class="success">
+    <p class="notice success">
       Short link:
       <a [href]="link.shortUrl" target="_blank" rel="noopener">{{ link.shortUrl }}</a>
     </p>
   }
 
-  <table class="links">
-    <thead>
-      <tr>
-        <th>Code</th>
-        <th>Original URL</th>
-        <th>Hits</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (item of items(); track item.code) {
+  <div class="card">
+    <table class="links">
+      <thead>
         <tr>
-          <td>
-            <a [href]="item.shortUrl" target="_blank" rel="noopener">{{ item.code }}</a>
-          </td>
-          <td class="url">{{ item.url }}</td>
-          <td>{{ item.hits }}</td>
+          <th>Code</th>
+          <th>Original URL</th>
+          <th>Hits</th>
         </tr>
-      } @empty {
-        <tr>
-          <td colspan="3" class="empty">No links yet.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.code) {
+          <tr>
+            <td>
+              <a [href]="item.shortUrl" target="_blank" rel="noopener">{{ item.code }}</a>
+            </td>
+            <td class="url">{{ item.url }}</td>
+            <td>{{ item.hits }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3" class="empty">No links yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </main>
